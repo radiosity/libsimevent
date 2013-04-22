@@ -37,6 +37,10 @@ class Event {
     public:
 
         Event(T _time = 0) : time(_time) {}
+	Event(Event<T> const & cpy): time(cpy.time) {}
+	Event(Event<T> && mv) : time(mv.time) {}
+	Event<T>& operator =(const Event<T>& cpy) { time = cpy.time; }
+	Event<T>& operator =(Event<T> && mv) { time = mv.time; }
         virtual ~Event() {}
 
         T get_time()  const{ return time; }
@@ -44,25 +48,46 @@ class Event {
         virtual void dispatch() = 0;
 
         bool operator< (Event<T> * evnt) {
-        		if(time < evnt->time) {
-        			return true;
-        		}
-        		return false;
+		if(time < evnt->time) {
+			return true;
+		}
+		return false;
         }
 
         bool operator> (Event<T> * evnt) {
-        		if(time > evnt->time) {
-        			return true;
-        		}
-			return false;
+		if(time > evnt->time) {
+			return true;
+		}
+		return false;
         }
 
         bool operator== (Event<T> * evnt) {
-        		if(time == evnt->time) {
-        			return true;
-        		}
-			return false; 
+		if(time == evnt->time) {
+			return true;
+		}
+		return false; 
+	}
+	
+	 bool operator< (Event<T> &evnt) {
+		if(time < evnt.time) {
+			return true;
+		}
+		return false;
         }
+
+        bool operator> (Event<T> &evnt) {
+		if(time > evnt.time) {
+			return true;
+		}
+		return false;
+        }
+	
+	bool operator==(Event<T> &evnt) {
+		if(time == evnt.time) {
+			return true;
+		}
+		return false;
+	}
 
 };
 

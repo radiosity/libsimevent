@@ -43,12 +43,12 @@ class Test_Event : public Event<T>
 public:
 	Test_Event(T _time) : Event<T>(_time) {};
 	~Test_Event() {};
-	void dispatch() {}
+	void dispatch() { cout << "Hello" << endl; }
 };
 
 BOOST_AUTO_TEST_CASE(event_test_get) {
 	
-	Test_Event<int> * evnt = new Test_Event<int>(0);
+	auto evnt = new Test_Event<int>(0);
 
 	BOOST_CHECK_EQUAL(evnt->get_time(),  0);
 
@@ -58,9 +58,9 @@ BOOST_AUTO_TEST_CASE(event_test_get) {
 
 BOOST_AUTO_TEST_CASE(event_test_less_than) {
 
-	Test_Event<int> * event1 = new Test_Event<int>(0);
+	auto event1 = new Test_Event<int>(0);
 
-	Test_Event<int> * event2 = new Test_Event<int>(1);
+	auto event2 = new Test_Event<int>(1);
 
 	BOOST_CHECK(*event1 < event2);
 
@@ -71,9 +71,9 @@ BOOST_AUTO_TEST_CASE(event_test_less_than) {
 
 BOOST_AUTO_TEST_CASE(event_test_greater_than) {
 
-	Test_Event<int> * event1 = new Test_Event<int>(1);
+	auto event1 = new Test_Event<int>(1);
 
-	Test_Event<int> * event2 = new Test_Event<int>(0);
+	auto event2 = new Test_Event<int>(0);
 
 	BOOST_CHECK(*event1 > event2);
 
@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE(event_test_greater_than) {
 
 BOOST_AUTO_TEST_CASE(event_test_equals) {
 
-	Test_Event<int> * event1 = new Test_Event<int>(1);
+	auto event1 = new Test_Event<int>(1);
 
-	Test_Event<int> * event2 = new Test_Event<int>(1);
+	auto event2 = new Test_Event<int>(1);
 
 	BOOST_CHECK(*event1 == event2);
 
@@ -94,3 +94,22 @@ BOOST_AUTO_TEST_CASE(event_test_equals) {
 	delete event1;
 
 }
+
+BOOST_AUTO_TEST_CASE(event_test_copy) {
+	
+	auto event1 = Test_Event<int>(1);
+	auto event2 = event1; 
+	
+	BOOST_CHECK(event1 == event2);
+	
+}
+
+BOOST_AUTO_TEST_CASE(event_test_stack) {
+	
+	auto event1 = Test_Event<int>(1);
+	auto event2 = Test_Event<int>(1); 
+	
+	BOOST_CHECK(event1 == event2);
+	
+}
+
