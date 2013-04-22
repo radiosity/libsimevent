@@ -29,60 +29,60 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define EVENT_HEADER
 
 template <class T>
-class Event {
+class BaseEvent {
 
     private:
         const T time;
 
     public:
 
-        Event(T _time = 0) : time(_time) {}
-	Event(Event<T> const & cpy): time(cpy.time) {}
-	Event(Event<T> && mv) : time(mv.time) {}
-	Event<T>& operator =(const Event<T>& cpy) { time = cpy.time; }
-	Event<T>& operator =(Event<T> && mv) { time = mv.time; }
-        virtual ~Event() {}
+        BaseEvent(T _time = 0) : time(_time) {}
+	BaseEvent(BaseEvent<T> const & cpy): time(cpy.time) {}
+	BaseEvent(BaseEvent<T> && mv) : time(mv.time) {}
+	BaseEvent<T>& operator =(const BaseEvent<T>& cpy) { time = cpy.time; }
+	BaseEvent<T>& operator =(BaseEvent<T> && mv) { time = mv.time; }
+        virtual ~BaseEvent() {}
 
         T get_time()  const{ return time; }
 
         virtual void dispatch() = 0;
 
-        bool operator< (Event<T> * evnt) {
+        bool operator< (BaseEvent<T> * evnt) {
 		if(time < evnt->time) {
 			return true;
 		}
 		return false;
         }
 
-        bool operator> (Event<T> * evnt) {
+        bool operator> (BaseEvent<T> * evnt) {
 		if(time > evnt->time) {
 			return true;
 		}
 		return false;
         }
 
-        bool operator== (Event<T> * evnt) {
+        bool operator== (BaseEvent<T> * evnt) {
 		if(time == evnt->time) {
 			return true;
 		}
 		return false; 
 	}
 	
-	 bool operator< (Event<T> &evnt) {
+	 bool operator< (BaseEvent<T> &evnt) {
 		if(time < evnt.time) {
 			return true;
 		}
 		return false;
         }
 
-        bool operator> (Event<T> &evnt) {
+        bool operator> (BaseEvent<T> &evnt) {
 		if(time > evnt.time) {
 			return true;
 		}
 		return false;
         }
 	
-	bool operator==(Event<T> &evnt) {
+	bool operator==(BaseEvent<T> &evnt) {
 		if(time == evnt.time) {
 			return true;
 		}

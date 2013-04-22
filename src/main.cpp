@@ -38,17 +38,17 @@ using std::endl;
 
 //Declare a simple dummy subclass 
 template <class T>
-class Test_Event : public Event<T>
+class TestEvent : public BaseEvent<T>
 {
 public:
-	Test_Event(T _time) : Event<T>(_time) {};
-	~Test_Event() {};
+	TestEvent(T _time) : BaseEvent<T>(_time) {};
+	~TestEvent() {};
 	void dispatch() { cout << "Hello" << endl; }
 };
 
 BOOST_AUTO_TEST_CASE(event_test_get) {
 	
-	auto evnt = new Test_Event<int>(0);
+	auto evnt = new TestEvent<int>(0);
 
 	BOOST_CHECK_EQUAL(evnt->get_time(),  0);
 
@@ -58,9 +58,9 @@ BOOST_AUTO_TEST_CASE(event_test_get) {
 
 BOOST_AUTO_TEST_CASE(event_test_less_than) {
 
-	auto event1 = new Test_Event<int>(0);
+	auto event1 = new TestEvent<int>(0);
 
-	auto event2 = new Test_Event<int>(1);
+	auto event2 = new TestEvent<int>(1);
 
 	BOOST_CHECK(*event1 < event2);
 
@@ -71,9 +71,9 @@ BOOST_AUTO_TEST_CASE(event_test_less_than) {
 
 BOOST_AUTO_TEST_CASE(event_test_greater_than) {
 
-	auto event1 = new Test_Event<int>(1);
+	auto event1 = new TestEvent<int>(1);
 
-	auto event2 = new Test_Event<int>(0);
+	auto event2 = new TestEvent<int>(0);
 
 	BOOST_CHECK(*event1 > event2);
 
@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE(event_test_greater_than) {
 
 BOOST_AUTO_TEST_CASE(event_test_equals) {
 
-	auto event1 = new Test_Event<int>(1);
+	auto event1 = new TestEvent<int>(1);
 
-	auto event2 = new Test_Event<int>(1);
+	auto event2 = new TestEvent<int>(1);
 
 	BOOST_CHECK(*event1 == event2);
 
@@ -97,19 +97,84 @@ BOOST_AUTO_TEST_CASE(event_test_equals) {
 
 BOOST_AUTO_TEST_CASE(event_test_copy) {
 	
-	auto event1 = Test_Event<int>(1);
+	auto event1 = TestEvent<int>(1);
 	auto event2 = event1; 
 	
 	BOOST_CHECK(event1 == event2);
 	
 }
 
-BOOST_AUTO_TEST_CASE(event_test_stack) {
+#include <utility>
+
+#include "ClosureEvent.hpp"
+
+using std::function;
+
+BOOST_AUTO_TEST_CASE(closure_test_get) {
 	
-	auto event1 = Test_Event<int>(1);
-	auto event2 = Test_Event<int>(1); 
+	function<void()> func = [](){};
+
+	auto evnt = ClosureEvent<int>(func, 0);
+
+	BOOST_CHECK_EQUAL(evnt.get_time(),  0);
+	
+}
+
+BOOST_AUTO_TEST_CASE(closure_test_less_than) {
+	
+	function<void()> func = [](){};
+
+	auto event1 = ClosureEvent<int>(func, 0);
+	auto event2 = ClosureEvent<int>(func, 1);
+
+	BOOST_CHECK(event1 < event2);
+
+}
+
+BOOST_AUTO_TEST_CASE(closure_test_greater_than) {
+	
+	function<void()> func = [](){};
+
+	auto event1 = ClosureEvent<int>(func, 1);
+	auto event2 = ClosureEvent<int>(func, 0);
+
+	BOOST_CHECK(event1 > event2);
+
+}
+
+BOOST_AUTO_TEST_CASE(closure_test_equals) {
+	
+	function<void()> func = [](){};
+
+	auto event1 = ClosureEvent<int>(func, 1);
+	auto event2 = ClosureEvent<int>(func, 1);
+
+	BOOST_CHECK(event1 == event2);
+
+}
+
+BOOST_AUTO_TEST_CASE(closure_test_copy) {
+	
+	function<void()> func = [](){};
+	
+	auto event1 = ClosureEvent<int>(func, 1);
+	auto event2 = event1; 
 	
 	BOOST_CHECK(event1 == event2);
 	
 }
+
+BOOST_AUTO_TEST_CASE(closure_test_dispatch) {
+	
+	int val = 0; 
+	
+	function<void()> func = [&](){ val = 1; };
+	
+	auto event1 = ClosureEvent<int>(func, 0);
+	event1.dispatch();
+
+	BOOST_CHECK_EQUAL(1, val);
+	
+}
+
 
