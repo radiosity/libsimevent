@@ -11,7 +11,7 @@ modification, are permitted provided that the following conditions are met:
       documentation and/or other materials provided with the distribution.
     * Neither the name of Richard Martin nor the
       names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+      derived from this softwarwe without specwific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BOOST_TEST_MAIN 
 #include <boost/test/included/unit_test.hpp>
 
-#include "Event.hpp"
+#include "BaseEvent.hpp"
 
 using std::cout;
 using std::endl; 
@@ -48,50 +48,42 @@ public:
 
 BOOST_AUTO_TEST_CASE(event_test_get) {
 	
-	auto evnt = new TestEvent<int>(0);
+	auto evnt = TestEvent<int>(0);
 
-	BOOST_CHECK_EQUAL(evnt->get_time(),  0);
-
-	delete evnt;
+	BOOST_CHECK_EQUAL(evnt.get_time(),  0);
 	
 }
 
 BOOST_AUTO_TEST_CASE(event_test_less_than) {
 
-	auto event1 = new TestEvent<int>(0);
+	auto event1 = TestEvent<int>(0);
+	auto event2 = TestEvent<int>(1);
 
-	auto event2 = new TestEvent<int>(1);
-
-	BOOST_CHECK(*event1 < event2);
-
-	delete event2;
-	delete event1;
+	BOOST_CHECK(event1 != event2);
+	BOOST_CHECK(event1 < event2);
+	BOOST_CHECK(!(event2 < event1));
 
 }
 
 BOOST_AUTO_TEST_CASE(event_test_greater_than) {
 
-	auto event1 = new TestEvent<int>(1);
+	auto event1 = TestEvent<int>(1);
+	auto event2 = TestEvent<int>(0);
 
-	auto event2 = new TestEvent<int>(0);
-
-	BOOST_CHECK(*event1 > event2);
-
-	delete event2;
-	delete event1;
+	BOOST_CHECK(event1 != event2);
+	BOOST_CHECK(event1 > event2);
+	BOOST_CHECK(!(event2 > event1));
 
 }
 
 BOOST_AUTO_TEST_CASE(event_test_equals) {
 
-	auto event1 = new TestEvent<int>(1);
+	auto event1 = TestEvent<int>(1);
+	auto event2 = TestEvent<int>(1);
 
-	auto event2 = new TestEvent<int>(1);
-
-	BOOST_CHECK(*event1 == event2);
-
-	delete event2;
-	delete event1;
+	BOOST_CHECK(event1 == event2);
+	BOOST_CHECK(!(event1 > event2));
+	BOOST_CHECK(!(event2 > event1));	
 
 }
 
@@ -101,6 +93,8 @@ BOOST_AUTO_TEST_CASE(event_test_copy) {
 	auto event2 = event1; 
 	
 	BOOST_CHECK(event1 == event2);
+	BOOST_CHECK(!(event1 > event2));
+	BOOST_CHECK(!(event2 > event1));	
 	
 }
 
@@ -138,7 +132,9 @@ BOOST_AUTO_TEST_CASE(closure_test_greater_than) {
 	auto event1 = ClosureEvent<int>(func, 1);
 	auto event2 = ClosureEvent<int>(func, 0);
 
+	BOOST_CHECK(event1 != event2);
 	BOOST_CHECK(event1 > event2);
+	BOOST_CHECK(!(event1 < event2));
 
 }
 
@@ -177,4 +173,20 @@ BOOST_AUTO_TEST_CASE(closure_test_dispatch) {
 	
 }
 
+#include "ListEventList.hpp"
 
+BOOST_AUTO_TEST_CASE(container_test_copy) {
+	
+	int val = 0; 
+	
+	function<void()> func = [&](){ val = 1; };
+	
+	auto event1 = ClosureEvent<int>(func, 0);
+	
+	auto cont = ListEventList<ClosureEvent<int>, int>();
+	cont.add(event1);
+	cont.run();
+
+	BOOST_CHECK_EQUAL(1, val);
+	
+}

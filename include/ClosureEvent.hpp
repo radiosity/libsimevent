@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <functional>
 #include <utility>
 
-#include "Event.hpp"
+#include "BaseEvent.hpp"
 
 using std::function;
 using std::move;
@@ -47,11 +47,35 @@ public:
         ClosureEvent(function<void()> _f, T _time = 0) : BaseEvent<T>(_time), f(_f) {}
 	ClosureEvent(ClosureEvent<T> const & cpy): BaseEvent<T>(cpy), f(cpy.f) {}
 	ClosureEvent(ClosureEvent<T> && mv) : BaseEvent<T>(move(mv)), f(mv.f) {}
-	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { time = cpy.time; f = cpy.f; }
-	ClosureEvent<T>& operator =(ClosureEvent<T> && mv) { time = mv.time; f = move(mv.f); }
+	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { BaseEvent<T>::operator=(cpy.etime); f = cpy.f; }
+	ClosureEvent<T>& operator =(ClosureEvent<T> && mv) { BaseEvent<T>::operator=(mv.etime); f = move(mv.f); }
         virtual ~ClosureEvent() {}
 		
 	virtual void dispatch() override final{ f(); }
+	
+	bool operator< (const ClosureEvent<T> &evnt) const {
+		return BaseEvent<T>::operator<(evnt);
+        }
+	
+	bool operator <=(const ClosureEvent<T> &evnt) const {
+		return BaseEvent<T>::operator<=(evnt);
+	}
+
+        bool operator> (const ClosureEvent<T> &evnt) const {
+		return BaseEvent<T>::operator>(evnt);
+        }
+	
+	bool operator >=(const ClosureEvent<T> &evnt) const {
+		return BaseEvent<T>::operator>=(evnt);
+	}
+	
+	bool operator==(const ClosureEvent<T> &evnt) const {
+		return BaseEvent<T>::operator==(evnt);
+	}
+	
+	bool operator!= (const ClosureEvent<T> &evnt) const {
+		return BaseEvent<T>::operator!=(evnt);
+	}
 		
 };
 

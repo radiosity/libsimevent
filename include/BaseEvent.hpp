@@ -31,62 +31,58 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 template <class T>
 class BaseEvent {
 
-    private:
-        const T time;
+    protected:
+        const T etime;
 
     public:
-
-        BaseEvent(T _time = 0) : time(_time) {}
-	BaseEvent(BaseEvent<T> const & cpy): time(cpy.time) {}
-	BaseEvent(BaseEvent<T> && mv) : time(mv.time) {}
-	BaseEvent<T>& operator =(const BaseEvent<T>& cpy) { time = cpy.time; }
-	BaseEvent<T>& operator =(BaseEvent<T> && mv) { time = mv.time; }
+        BaseEvent(T _time = 0) : etime(_time) {}
+	BaseEvent(BaseEvent<T> const & cpy): etime(cpy.etime) {}
+	BaseEvent(BaseEvent<T> && mv) : etime(mv.etime) {}
+	BaseEvent<T>& operator =(const BaseEvent<T>& cpy) { etime = cpy.etime; }
+	BaseEvent<T>& operator =(BaseEvent<T> && mv) { etime = mv.etime; }
         virtual ~BaseEvent() {}
 
-        T get_time()  const{ return time; }
+        T get_time()  const{ return etime; }
 
-        virtual void dispatch() = 0;
-
-        bool operator< (BaseEvent<T> * evnt) {
-		if(time < evnt->time) {
+        virtual void dispatch() {};
+	
+	bool operator< (const BaseEvent<T> &evnt) const {
+		if(etime < evnt.etime) {
 			return true;
 		}
 		return false;
         }
+	
+	bool operator <=(const BaseEvent<T> &evnt) const {
+		if(etime == evnt.etime || etime < evnt.etime) {
+			return true; 
+		}
+		return false; 
+	}
 
-        bool operator> (BaseEvent<T> * evnt) {
-		if(time > evnt->time) {
+        bool operator> (const BaseEvent<T> &evnt) const {
+		if(etime > evnt.etime) {
 			return true;
 		}
 		return false;
         }
-
-        bool operator== (BaseEvent<T> * evnt) {
-		if(time == evnt->time) {
+	
+	bool operator >=(const BaseEvent<T> &evnt) const {
+		if(etime == evnt.etime || etime > evnt.etime) {
 			return true;
 		}
 		return false; 
 	}
 	
-	 bool operator< (BaseEvent<T> &evnt) {
-		if(time < evnt.time) {
+	bool operator==(const BaseEvent<T> &evnt) const {
+		if(etime == evnt.etime) {
 			return true;
 		}
 		return false;
-        }
-
-        bool operator> (BaseEvent<T> &evnt) {
-		if(time > evnt.time) {
-			return true;
-		}
-		return false;
-        }
+	}
 	
-	bool operator==(BaseEvent<T> &evnt) {
-		if(time == evnt.time) {
-			return true;
-		}
-		return false;
+	bool operator!= (const BaseEvent<T> &evnt) const {
+		return (!(this == &evnt));
 	}
 
 };

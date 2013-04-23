@@ -38,9 +38,9 @@ class Event_List{
 		Event_List() {};
 		virtual ~Event_List() {};
 
-        virtual void add(Event<T> * evnt) = 0;
-        virtual void run() = 0;
-        virtual void tick(T _time) = 0;
+		virtual void add(Event<T> * evnt) = 0;
+		virtual void run() = 0;
+		virtual void tick(T _time) = 0;
 
 };
 
