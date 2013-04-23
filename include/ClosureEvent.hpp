@@ -36,6 +36,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using std::function;
 using std::move;
 
+namespace libsim 
+{
+
 template <class T>
 class ClosureEvent : public BaseEvent<T> {
 	
@@ -78,5 +81,7 @@ public:
 	}
 		
 };
+
+}
 
 #endif

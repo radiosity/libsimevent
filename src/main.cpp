@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using std::cout;
 using std::endl; 
+using namespace libsim;
 
 //Declare a simple dummy subclass 
 template <class T>

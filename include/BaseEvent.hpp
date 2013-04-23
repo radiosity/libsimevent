@@ -28,6 +28,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef EVENT_HEADER
 #define EVENT_HEADER
 
+namespace libsim
+{
+
 template <class T>
 class BaseEvent {
 
@@ -87,4 +90,5 @@ class BaseEvent {
 
 };
 
+}
 #endif

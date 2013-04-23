@@ -40,8 +40,11 @@ using std::move;
 using std::enable_if; 
 using std::is_base_of;
 
+namespace libsim 
+{
+	
 //Template metaprogramming baby
-
+	
 template<class T, class U, class Enable = void>
 class ListEventList;
 
@@ -140,5 +143,7 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
         }
 
 };
+
+}
 
 #endif /* LIST_EVENT_LIST_HPP_ */
