@@ -96,21 +96,21 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
 
         }
 
-        void tick(T _time) {
+        void tick(U _time) {
 
 		if(data.empty()) {
 			return;
 		}
 
-		T evnt = data.front();
+		auto evnt = data.front();
 
-		if(evnt > _time) {
+		if(evnt.get_time() > _time) {
 			return;
 		}
 
 		while(1) {
 
-			if( evnt > _time) {
+			if( evnt.get_time() > _time) {
 				return;
 			}
 			else {

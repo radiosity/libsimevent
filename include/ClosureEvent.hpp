@@ -40,15 +40,15 @@ template <class T>
 class ClosureEvent : public BaseEvent<T> {
 	
 private:
-	const function<void()> f; 
+	function<void()> f; 
 	
 public:
 	
         ClosureEvent(function<void()> _f, T _time = 0) : BaseEvent<T>(_time), f(_f) {}
 	ClosureEvent(ClosureEvent<T> const & cpy): BaseEvent<T>(cpy), f(cpy.f) {}
 	ClosureEvent(ClosureEvent<T> && mv) : BaseEvent<T>(move(mv)), f(mv.f) {}
-	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { BaseEvent<T>::operator=(cpy.etime); f = cpy.f; }
-	ClosureEvent<T>& operator =(ClosureEvent<T> && mv) { BaseEvent<T>::operator=(mv.etime); f = move(mv.f); }
+	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { BaseEvent<T>::operator=(cpy.etime); f = cpy.f; return *this;}
+	ClosureEvent<T>& operator =(ClosureEvent<T> && mv) { BaseEvent<T>::operator=(mv.etime); f = move(mv.f); return *this; }
         virtual ~ClosureEvent() {}
 		
 	virtual void dispatch() override final{ f(); }

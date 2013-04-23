@@ -32,14 +32,14 @@ template <class T>
 class BaseEvent {
 
     protected:
-        const T etime;
+        T etime;
 
     public:
         BaseEvent(T _time = 0) : etime(_time) {}
 	BaseEvent(BaseEvent<T> const & cpy): etime(cpy.etime) {}
 	BaseEvent(BaseEvent<T> && mv) : etime(mv.etime) {}
-	BaseEvent<T>& operator =(const BaseEvent<T>& cpy) { etime = cpy.etime; }
-	BaseEvent<T>& operator =(BaseEvent<T> && mv) { etime = mv.etime; }
+	BaseEvent<T>& operator =(const BaseEvent<T>& cpy) { etime = cpy.etime; return *this; }
+	BaseEvent<T>& operator =(BaseEvent<T> && mv) { etime = mv.etime; return *this; }
         virtual ~BaseEvent() {}
 
         T get_time()  const{ return etime; }

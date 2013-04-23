@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(closure_test_dispatch) {
 
 #include "ListEventList.hpp"
 
-BOOST_AUTO_TEST_CASE(container_test_copy) {
+BOOST_AUTO_TEST_CASE(container_test_through) {
 	
 	int val = 0; 
 	
@@ -190,3 +190,81 @@ BOOST_AUTO_TEST_CASE(container_test_copy) {
 	BOOST_CHECK_EQUAL(1, val);
 	
 }
+
+BOOST_AUTO_TEST_CASE(container_insertion_straight) {
+	
+	int val = 0; 
+	
+	function<void()> func1 = [&](){ val = 1; };
+	function<void()> func2 = [&](){ val = 2; };
+	
+	auto event1 = ClosureEvent<int>(func1, 0);
+	auto event2 = ClosureEvent<int>(func2, 1);
+	
+	auto cont = ListEventList<ClosureEvent<int>, int>();
+	cont.add(event1);
+	cont.add(event2);
+	
+	cont.tick(0);
+	BOOST_CHECK_EQUAL(1, val);
+	
+	cont.tick(1);
+	BOOST_CHECK_EQUAL(2, val);
+	
+}
+
+BOOST_AUTO_TEST_CASE(container_insertion_middle) {
+	
+	int val = 0; 
+	
+	function<void()> func1 = [&](){ val = 1; };
+	function<void()> func2 = [&](){ val = 2; };
+	function<void()> func3 = [&](){ val = 3; };
+	
+	auto event1 = ClosureEvent<int>(func1, 0);
+	auto event2 = ClosureEvent<int>(func2, 1);
+	auto event3 = ClosureEvent<int>(func3, 2);
+	
+	auto cont = ListEventList<ClosureEvent<int>, int>();
+	cont.add(event1);
+	cont.add(event3);
+	cont.add(event2);
+	
+	cont.tick(0);
+	BOOST_CHECK_EQUAL(1, val);
+	
+	cont.tick(1);
+	BOOST_CHECK_EQUAL(2, val);
+	
+	cont.tick(2);
+	BOOST_CHECK_EQUAL(3, val);
+	
+}
+
+BOOST_AUTO_TEST_CASE(container_insertion_same) {
+	
+	int val = 0; 
+	
+	function<void()> func1 = [&](){ val = 1; };
+	function<void()> func2 = [&](){ val += 1; };
+	function<void()> func3 = [&](){ val = 3; };
+	
+	auto event1 = ClosureEvent<int>(func1, 0);
+	auto event2 = ClosureEvent<int>(func2, 0);
+	auto event3 = ClosureEvent<int>(func3, 1);
+	
+	auto cont = ListEventList<ClosureEvent<int>, int>();
+	cont.add(event1);
+	cont.add(event2);
+	cont.add(event3);
+	
+	cont.tick(0);
+	BOOST_CHECK_EQUAL(2, val);
+	
+	cont.tick(1);
+	BOOST_CHECK_EQUAL(3, val);
+	
+}
+
+
+
