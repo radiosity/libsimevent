@@ -98,44 +98,44 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
 
         void tick(T _time) {
 
-        		if(data.empty()) {
-        			return;
-        		}
+		if(data.empty()) {
+			return;
+		}
 
-        		T evnt = data.front();
+		T evnt = data.front();
 
-        		if(evnt > _time) {
-        			return;
-        		}
+		if(evnt > _time) {
+			return;
+		}
 
-        		while(1) {
+		while(1) {
 
-        			if( evnt > _time) {
-        				return;
-        			}
-        			else {
-        				data.pop_front();
-        				evnt.dispatch();
+			if( evnt > _time) {
+				return;
+			}
+			else {
+				data.pop_front();
+				evnt.dispatch();
 
-        				if(data.empty()) {
-        					return;
-        				}
+				if(data.empty()) {
+					return;
+				}
 
-					evnt = data.front();
-        			}
-        		}
+				evnt = data.front();
+			}
+		}
 
         }
 
         void run() {
 
-        		while(!data.empty()) {
+		while(!data.empty()) {
 
-        			T evnt = data.front();
-        			data.pop_front();
-        			evnt.dispatch();
+			T evnt = data.front();
+			data.pop_front();
+			evnt.dispatch();
 
-        		}
+		}
 
         }
 
