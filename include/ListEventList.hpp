@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <type_traits>
 
 #include "BaseEvent.hpp"
+#include "EventList.hpp"
 
 using std::list; 
 using std::move;
@@ -49,7 +50,7 @@ template<class T, class U, class Enable = void>
 class ListEventList;
 
 template <class T, class U>  
-class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>::type >{
+class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>::type > : public EventList<T,U> {
 
     private:
 	list<T> data;
@@ -69,7 +70,7 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
 		}
 	}
 
-        void add(T evnt){
+        void add(T evnt) override {
 
 		if(data.empty()) {
 			data.push_back(evnt);
@@ -99,7 +100,7 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
 
         }
 
-        void tick(U _time) {
+        void tick(U _time) override {
 
 		if(data.empty()) {
 			return;
@@ -130,7 +131,7 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
 
         }
 
-        void run() {
+        void run() override {
 
 		while(!data.empty()) {
 

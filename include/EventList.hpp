@@ -25,72 +25,41 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CLOSUREEVENT_HEADER
-#define CLOSUREEVENT_HEADER
-
-#include <functional>
-#include <utility>
+#ifndef EVENT_LIST_HPP_
+#define EVENT_LIST_HPP_
 
 #include "BaseEvent.hpp"
 
-using std::function;
+using std::list; 
 using std::move;
+using std::enable_if; 
+using std::is_base_of;
 
 namespace libsim 
 {
+	
+//Template metaprogramming baby
+	
+template<class T, class U, class Enable = void>
+class EventList;
 
-template <class T>
-class ClosureEvent : public BaseEvent<T> {
-	
-private:
-	function<void()> f; 
-	
-public:
-	
-        ClosureEvent(function<void()> _f, T _time = 0) : BaseEvent<T>(_time), f(_f) {}
-	ClosureEvent(ClosureEvent<T> const & cpy): BaseEvent<T>(cpy), f(cpy.f) {}
-	ClosureEvent(ClosureEvent<T> && mv) : BaseEvent<T>(move(mv)), f(mv.f) {}
-	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { 
-		BaseEvent<T>::operator=(cpy.etime); 
-		f = cpy.f; 
-		return *this;
-	}
-	ClosureEvent<T>& operator =(ClosureEvent<T> && mv) { 
-		BaseEvent<T>::operator=(mv.etime); 
-		f = move(mv.f); 
-		mv.f = [](){};
-		return *this; 
-	}
-        virtual ~ClosureEvent() {}
-		
-	virtual void dispatch() override final{ f(); }
-	
-	bool operator< (const ClosureEvent<T> &evnt) const {
-		return BaseEvent<T>::operator<(evnt);
-        }
-	
-	bool operator <=(const ClosureEvent<T> &evnt) const {
-		return BaseEvent<T>::operator<=(evnt);
-	}
+template <class T, class U>  
+class EventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>::type >{
 
-        bool operator> (const ClosureEvent<T> &evnt) const {
-		return BaseEvent<T>::operator>(evnt);
-        }
+    private:
+	list<T> data;
+
+    public:
 	
-	bool operator >=(const ClosureEvent<T> &evnt) const {
-		return BaseEvent<T>::operator>=(evnt);
-	}
-	
-	bool operator==(const ClosureEvent<T> &evnt) const {
-		return BaseEvent<T>::operator==(evnt);
-	}
-	
-	bool operator!= (const ClosureEvent<T> &evnt) const {
-		return BaseEvent<T>::operator!=(evnt);
-	}
-		
+        EventList() = default; 
+        virtual ~EventList() {};
+
+        virtual void add(T evnt) = 0;
+        virtual void tick(U _time) = 0;
+        virtual void run() = 0;
+
 };
 
 }
 
-#endif
+#endif /* LIST_EVENT_LIST_HPP_ */
