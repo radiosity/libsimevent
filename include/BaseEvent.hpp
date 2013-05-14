@@ -28,6 +28,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef EVENT_HEADER
 #define EVENT_HEADER
 
+#include <utility>
+
+using std::move; 
+
 namespace libsim
 {
 
@@ -40,12 +44,12 @@ class BaseEvent {
     public:
         BaseEvent(T _time = 0) : etime(_time) {}
 	BaseEvent(BaseEvent<T> const & cpy): etime(cpy.etime) {}
-	BaseEvent(BaseEvent<T> && mv) : etime(mv.etime) {}
+	BaseEvent(BaseEvent<T> && mv) : etime(move(mv.etime)) {}
 	BaseEvent<T>& operator =(const BaseEvent<T>& cpy) { etime = cpy.etime; return *this; }
-	BaseEvent<T>& operator =(BaseEvent<T> && mv) { etime = mv.etime; return *this; }
+	BaseEvent<T>& operator =(BaseEvent<T> && mv) { etime = move(mv.etime); return *this; }
         virtual ~BaseEvent() {}
 
-        T get_time()  const{ return etime; }
+        T get_time() const { return etime; }
 
         virtual void dispatch() {};
 	

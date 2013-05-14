@@ -51,12 +51,12 @@ public:
 	ClosureEvent(ClosureEvent<T> const & cpy): BaseEvent<T>(cpy), f(cpy.f) {}
 	ClosureEvent(ClosureEvent<T> && mv) : BaseEvent<T>(move(mv)), f(mv.f) {}
 	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { 
-		BaseEvent<T>::operator=(cpy.etime); 
+		BaseEvent<T>::operator=(cpy); 
 		f = cpy.f; 
 		return *this;
 	}
 	ClosureEvent<T>& operator =(ClosureEvent<T> && mv) { 
-		BaseEvent<T>::operator=(mv.etime); 
+		BaseEvent<T>::operator=(move(mv)); 
 		f = move(mv.f); 
 		mv.f = [](){};
 		return *this; 
