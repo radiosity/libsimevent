@@ -37,14 +37,14 @@ using std::cout;
 using std::endl; 
 using namespace libsim;
 
-//Declare a simple dummy subclass 
+//Declare a simptle dummy subclass 
 template <class T>
 class TestEvent : public BaseEvent<T>
 {
 public:
 	TestEvent(T _time) : BaseEvent<T>(_time) {};
 	~TestEvent() {};
-	void dispatch() { cout << "Hello" << endl; }
+	void dispatch() { }
 };
 
 BOOST_AUTO_TEST_CASE(event_test_get) {
@@ -266,6 +266,25 @@ BOOST_AUTO_TEST_CASE(container_insertion_same) {
 	BOOST_CHECK_EQUAL(3, val);
 	
 }
+
+#include "InstrumentedEventList.hpp"
+
+BOOST_AUTO_TEST_CASE(instrumented_container) {
+	
+	auto cont = InstrumentedEventList<TestEvent<int>, int>();
+	
+	for(int i = 0; i < 30; i++) {
+	  
+		auto evnt = TestEvent<int>(i);
+		
+		cont.add(evnt);
+	  
+	}
+	
+	cont.run();
+	
+}
+
 
 
 
