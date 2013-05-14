@@ -63,8 +63,7 @@ class ListEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>
 	ListEventList<T, U>& operator =(const ListEventList<T, U>& cpy) { data = cpy.data; }
 	ListEventList<T, U>& operator =(ListEventList<T, U> && mv) { data = move(mv.data); }
         
-    
-        ~ListEventList() {
+	~ListEventList() {
 		if( ! data.empty() ) {
 			cout << "Danger, William Robinson. Event_List Destructor called while Events scheduled" << endl;
 		}
