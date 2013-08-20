@@ -1,0 +1,149 @@
+/*
+Copyright (c) 2013, Richard Martin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Richard Martin nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL RICHARD MARTIN BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#ifndef DEQUE_EVENT_LIST_HPP_
+#define DEQUE_EVENT_LIST_HPP_
+
+#include <deque>
+#include <algorithm>
+#include <utility>
+#include <type_traits>
+
+#include "BaseEvent.hpp"
+#include "EventList.hpp"
+
+using std::deque; 
+using std::move;
+using std::enable_if; 
+using std::is_base_of;
+
+namespace libsim 
+{
+	
+//Template metaprogramming baby
+	
+template<class T, class U, class Enable = void>
+class DequeEventList;
+
+template <class T, class U>  
+class DequeEventList<T, U, typename enable_if<is_base_of<BaseEvent<U>, T>::value>::type > : public EventList<T,U> {
+
+    private:
+	deque<T> data;
+
+    public:
+	
+        DequeEventList() = default; 
+	DequeEventList(DequeEventList<T, U> const & cpy) : data(cpy.data) {}
+	DequeEventList(DequeEventList<T, U> && mv) : data(move(mv.data)) {}
+	DequeEventList<T, U>& operator =(const DequeEventList<T, U>& cpy) { data = cpy.data; }
+	DequeEventList<T, U>& operator =(DequeEventList<T, U> && mv) { data = move(mv.data); }
+        
+	~DequeEventList() {
+		if( ! data.empty() ) {
+			cout << "Danger, William Robinson. Event_List Destructor called while Events scheduled" << endl;
+		}
+	}
+
+        void add(T evnt) override {
+
+		if(data.empty()) {
+			data.push_back(evnt);
+		}
+		else {
+
+			//try to add it at the end
+			auto riter = data.rbegin();
+			auto iter = data.begin();
+
+			if(evnt >= (*riter)) {
+				//aka, the event being added is further off than the
+				//oldest event currently in the queue.
+				data.push_back(evnt);
+			}
+			else if (evnt <= (*iter)) {
+				//aka, the event being added is younger than the next event in the queue.
+				data.push_front(evnt);
+			}
+			else {
+				//gutted. Now have to find the place for it to go.
+				iter = upper_bound(data.begin(), data.end(), evnt);
+				data.insert(iter, evnt);
+			}
+
+		}
+
+        }
+
+        void tick(U _time) override {
+
+		if(data.empty()) {
+			return;
+		}
+
+		auto evnt = data.front();
+
+		if(evnt.get_time() > _time) {
+			return;
+		}
+
+		while(1) {
+
+			if( evnt.get_time() > _time) {
+				return;
+			}
+			else {
+				data.pop_front();
+				evnt.dispatch();
+
+				if(data.empty()) {
+					return;
+				}
+
+				evnt = data.front();
+			}
+		}
+
+        }
+
+        void run() override {
+
+		while(!data.empty()) {
+
+			T evnt = data.front();
+			data.pop_front();
+			evnt.dispatch();
+
+		}
+
+        }
+
+};
+
+}
+
+#endif /* DEQUE_EVENT_LIST_HPP_ */

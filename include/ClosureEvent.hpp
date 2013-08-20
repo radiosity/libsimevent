@@ -63,7 +63,7 @@ public:
 	}
         virtual ~ClosureEvent() {}
 		
-	virtual void dispatch() override final{ f(); }
+	virtual void dispatch() override final { f(); }
 	
 	bool operator< (const ClosureEvent<T> &evnt) const {
 		return BaseEvent<T>::operator<(evnt);
