@@ -4,7 +4,7 @@ I've written a number of event-based simulators in my life, and in the end I alw
 
 libsimevent is the result of this work.  
 
-EvenList
+EventList
 -----
 This is the superclass for all the list of events waiting to be called. Currently it has only one implementation, the ListEventList.
 

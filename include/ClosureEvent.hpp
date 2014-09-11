@@ -49,7 +49,7 @@ public:
 	
         ClosureEvent(function<void()> _f, T _time = 0) : BaseEvent<T>(_time), f(_f) {}
 	ClosureEvent(ClosureEvent<T> const & cpy): BaseEvent<T>(cpy), f(cpy.f) {}
-	ClosureEvent(ClosureEvent<T> && mv) : BaseEvent<T>(move(mv)), f(mv.f) {}
+	ClosureEvent(ClosureEvent<T> && mv) : BaseEvent<T>(move(mv)), f(move(mv.f)) {}
 	ClosureEvent<T>& operator =(const ClosureEvent<T>& cpy) { 
 		BaseEvent<T>::operator=(cpy); 
 		f = cpy.f; 
